@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataPivoter\DataPivoter.csproj">
-      <Project>{1cfd0961-82a8-4779-b385-ecf2ddabc7cd}</Project>
+      <Project>{1CFD0961-82A8-4779-B385-ECF2DDABC7CD}</Project>
       <Name>DataPivoter</Name>
     </ProjectReference>
   </ItemGroup>
