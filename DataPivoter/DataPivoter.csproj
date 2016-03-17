@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExtensionAttribute.cs" />
+    <Compile Include="GeometryExtensions.cs" />
     <Compile Include="JSON.cs" />
     <Compile Include="JsonHelpers.cs" />
     <Compile Include="OldPrettyPrinter.cs" />
@@ -50,6 +52,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Libs\Newtonsoft.json\8.0.3\Newtonsoft.Json.dll" />
+    <Content Include="SQL\02_TableFromView.sql" />
+    <Content Include="SQL\01_ViewFromQuery.sql" />
+    <Content Include="SQL\03_[_____aMySchema].sql" />
+    <Content Include="SQL\04_InsertInto[_____aMySchema].sql" />
+    <Content Include="SQL\05_RandomizeUIDs.sql" />
+    <Content Include="SQL\06_CreateDataTable.sql" />
+    <Content Include="SQL\07_InsertRandomizedData.sql" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Data_NoReportingData.txt.enc" />

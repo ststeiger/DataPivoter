@@ -44,28 +44,36 @@ namespace DataPivoter
             return retVal;
         } // End Function GetFile 
 
-        public static System.Data.DataTable GetJsonSampleDataReportingDate()
+        public static System.Data.DataTable GetJsonSampleData(bool withReportingData)
         {
-            // return DataPivoter.JsonHelpers.DeserializeFromJsonFile<System.Data.DataTable>(@"Data_ReportingData.txt");
-            string JSON = GetEmbeddedFileText("Data_ReportingData.txt.enc");
+            string fn = "Data_NoReportingData.txt.enc";
+
+            if (withReportingData)
+                fn = "Data_ReportingData.txt.enc";
+            
+            string JSON = GetEmbeddedFileText(fn);
             JSON = DataPivoter.Cryptography.AES.DeCrypt(JSON);
 
-            return JsonHelper.Deserialize<System.Data.DataTable>(JSON);
+            System.Data.DataTable dt = JsonHelper.Deserialize<System.Data.DataTable>(JSON);
+
+            /*
+            System.Collections.Generic.Dictionary<string, string> dict = new System.Collections.Generic.Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
+
+
+            foreach (System.Data.DataColumn dc in dt.Columns)
+            {
+                if (dict.ContainsKey(dc.ColumnName))
+                    throw new System.Exception("Result set contains column \"" + dc.ColumnName + "\" at least twice.");
+                else
+                    dict.Add(dc.ColumnName, null);
+            }
+            */
+
+            return dt;
         }
 
 
-        public static System.Data.DataTable GetJsonSampleDataNoReportingDate()
-        {
-            // return DataPivoter.JsonHelpers.DeserializeFromJsonFile<System.Data.DataTable>(@"Data_NoReportingData.txt");
-            string JSON = GetEmbeddedFileText("Data_ReportingData.txt.enc");
-            JSON = DataPivoter.Cryptography.AES.DeCrypt(JSON);
-
-            return JsonHelper.Deserialize<System.Data.DataTable>(JSON);
-        }
-
-
-
-        public static System.Data.DataTable GetSampleData()
+        public static System.Data.DataTable GetSampleData(bool withReportingData)
         {
             string strSQL = @"
 SELECT 
@@ -92,9 +100,10 @@ SELECT
 	,CAST(NA_Code AS float) NA_CodeNr 
 	,NAG_UID
 	,NAG_LANG_DE
-	,NA_Sort
+	,NAG_Sort
     ,RM_DatumVon 
     ,RM_DatumBis 
+    ,ZO_RMFlaeche_Flaeche 
 FROM T_AP_Standort 
 
 LEFT JOIN T_AP_Gebaeude ON T_AP_Gebaeude.GB_SO_UID = T_AP_Standort.SO_UID 
@@ -107,10 +116,13 @@ AND CURRENT_TIMESTAMP BETWEEN T_ZO_AP_Raum_AP_Ref_Nutzungsart.ZO_RMNA_DatumVon A
 AND T_ZO_AP_Raum_AP_Ref_Nutzungsart.ZO_RMNA_Status = 1 
 LEFT JOIN T_AP_Ref_Nutzungsart ON T_AP_Ref_Nutzungsart.NA_UID = ZO_RMNA_NA_UID 
 LEFT JOIN T_AP_Ref_Nutzungsartgruppe ON T_AP_Ref_Nutzungsartgruppe.NAG_UID = T_AP_Ref_Nutzungsart.NA_NAG_UID
+LEFT JOIN T_ZO_AP_Raum_Flaeche ON ZO_RMFlaeche_RM_UID = RM_UID AND ZO_RMFlaeche_Status = 1 --AND CURRENT_TIMESTAMP BETWEEN ZO_RMFlaeche_DatumVon AND ZO_RMFlaeche_DatumBis 
 
 WHERE T_AP_Raum.RM_Status = 1 
--- AND CURRENT_TIMESTAMP BETWEEN T_AP_Raum.RM_DatumVon AND T_AP_Raum.RM_DatumBis 
-";
+"
+;
+            if (withReportingData)
+                strSQL+=@"AND CURRENT_TIMESTAMP BETWEEN T_AP_Raum.RM_DatumVon AND T_AP_Raum.RM_DatumBis " + System.Environment.NewLine;
 
             return GetDataTable(strSQL);
         }
