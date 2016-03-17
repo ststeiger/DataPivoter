@@ -1,4 +1,4 @@
-﻿<Properties StartupItem="DataPivoterTest/DataPivoterTest.csproj">
+﻿<Properties StartupItem="DataPivoterTestForm/DataPivoterTestForm.csproj" GitUserInfo="UsingMD">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.Workbench />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

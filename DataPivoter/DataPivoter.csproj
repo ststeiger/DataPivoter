@@ -71,4 +71,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <None Include="SQL\createTable.ts" />
+    <None Include="SQL\http.ts" />
+  </ItemGroup>
 </Project>
