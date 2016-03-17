@@ -40,15 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExtensionAttribute.cs" />
-    <Compile Include="GeometryExtensions.cs" />
-    <Compile Include="JSON.cs" />
-    <Compile Include="JsonHelpers.cs" />
-    <Compile Include="OldPrettyPrinter.cs" />
-    <Compile Include="PasswordEncryption.cs" />
+    <Compile Include="Tools\ExtensionAttribute.cs" />
+    <Compile Include="Tools\GeometryExtensions.cs" />
+    <Compile Include="Tools\JSON.cs" />
+    <Compile Include="Tools\JsonHelpers.cs" />
+    <Compile Include="Tools\OldPrettyPrinter.cs" />
+    <Compile Include="Tools\PasswordEncryption.cs" />
     <Compile Include="PivotComputer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SQL.cs" />
+    <Compile Include="Tools\SQL.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Libs\Newtonsoft.json\8.0.3\Newtonsoft.Json.dll" />
