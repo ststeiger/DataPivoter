@@ -39,7 +39,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Tools\ExtensionAttribute.cs" />
+    <Compile Include="NET20\ExtensionAttribute.cs" />
+    <Compile Include="NET20\HashSet.cs" />
     <Compile Include="Tools\GeometryExtensions.cs" />
     <Compile Include="Tools\JSON.cs" />
     <Compile Include="Tools\JsonHelpers.cs" />
@@ -75,4 +76,5 @@
     <None Include="SQL\createTable.ts" />
     <None Include="SQL\http.ts" />
   </ItemGroup>
+  <ItemGroup />
 </Project>

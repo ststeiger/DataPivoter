@@ -55,6 +55,10 @@ namespace DataPivoterTestForm
             // SaveData(ref m_dtSampleData, withReportingDate);
             m_dtSampleData = DataPivoter.SQL.GetJsonSampleData(withReportingDate);
 
+            DataPivoter.cPivotTable pvt = new DataPivoter.cPivotTable(m_dtSampleData);
+            pvt.Test();
+            
+
             // DataPivoter.JsonHelpers.SerializeToFile("/root/Desktop/pivoterdata.txt", m_dtSampleData);
 
 
