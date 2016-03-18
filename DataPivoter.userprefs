@@ -1,6 +1,12 @@
 ﻿<Properties StartupItem="DataPivoterTestForm/DataPivoterTestForm.csproj" GitUserInfo="UsingMD">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench>
+    <Files>
+      <File FileName="DataPivoterTestForm/Form1.cs" Line="13" Column="9" />
+      <File FileName="DataPivoter/SQL/createTable.ts" Line="26" Column="2" />
+      <File FileName="DataPivoter/PivotComputer.cs" Line="26" Column="30" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

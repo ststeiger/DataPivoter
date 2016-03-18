@@ -2,36 +2,38 @@
 namespace DataPivoter
 {
 
+
     internal static class MyDataTableExtensions
     {
+
 
         public static System.Data.DataTable Sort(this System.Data.DataTable table, string sort)
         {
             System.Data.DataTable newTable = table.Clone();
             System.Data.DataRow[] rowArray = table.Select(null, sort);
 
-
             for (long i = 0; i < rowArray.LongLength; ++i)
             {
                 newTable.ImportRow(rowArray[i]);
-            }
+            } // Next i
 
             return newTable;
-        }
+        } // End Function Sort
 
 
         private static void CopyColumns(this System.Data.DataTable source, System.Data.DataTable dest, params string[] columns)
         {
-            foreach (System.Data.DataRow sourcerow in source.Rows)
+            foreach (System.Data.DataRow sourceRow in source.Rows)
             {
                 System.Data.DataRow destRow = dest.NewRow();
-                foreach (string colname in columns)
+                foreach (string colName in columns)
                 {
-                    destRow[colname] = sourcerow[colname];
+                    destRow[colName] = sourceRow[colName];
                 }
                 dest.Rows.Add(destRow);
-            }
-        }
+            } // Next sourceRow 
+
+        } // End Sub CopyColumns
 
     }
 
@@ -69,16 +71,16 @@ namespace DataPivoter
 
         public void Test()
         {
-            System.Collections.Generic.List<string> ls = new System.Collections.Generic.List<string>() { 
+            System.Collections.Generic.List<string> lsGroupByFields = new System.Collections.Generic.List<string>() { 
                  "SO_UID"
                 ,"GB_UID" 
-                ,"GS_UID" 
-                ,"RM_UID" 
+                //,"GS_UID" 
+                //,"RM_UID" 
             };
-            
 
-            var cg = new cColumnGroup(this, ls);
-            this.ColumnGroups.Add(cg);
+
+            cColumnGroup columnGroup1 = new cColumnGroup(this, lsGroupByFields);
+            this.ColumnGroups.Add(columnGroup1);
         }
 
 
@@ -86,21 +88,35 @@ namespace DataPivoter
 
 
     public class cRowGroup : cPivotBase
-    {
-
-    }
+    { }
 
 
     public class GroupedValuesList
     {
-        public object value;
+        private object m_value;
+        private bool m_hasValue;
         public System.Collections.Generic.List<GroupedValuesList> ls;
+
 
 
         public GroupedValuesList(object pobj)
         {
             this.value = pobj;
             this.ls = new System.Collections.Generic.List<GroupedValuesList>();
+        } // End Constructor
+
+
+        public object value
+        {
+            get{ 
+                return m_value;
+            }
+
+            set{ 
+                m_hasValue = true;
+                m_value = value;
+            }
+
         }
 
 
@@ -108,8 +124,7 @@ namespace DataPivoter
         {
             get
             {
-
-                if (this.value != null && ls.Count == 0)
+                if (this.m_hasValue && ls.Count == 0)
                     return 1;
 
                 long total = 0;
@@ -117,11 +132,12 @@ namespace DataPivoter
                 for (int i = 0; i < ls.Count; ++i)
                 {
                     total += ls[i].Count;
-                }
+                } // Next i
 
                 return total;
-            }
-        }
+            } // End Get 
+
+        } // End Property Count
 
 
         public static bool CompareObjects(object val1, object val2)
@@ -130,14 +146,15 @@ namespace DataPivoter
             if (val1 != null && val2 != null)
             {
 
+                // if(val1.GetType() == val2.GetType())
                 if (object.ReferenceEquals(val1.GetType(), typeof(string)) && object.ReferenceEquals(val2.GetType(), typeof(string)))
                 {
                     string str1 = val1.ToString();
                     string str2 = val2.ToString();
                     return string.Equals(str1, str2, System.StringComparison.InvariantCultureIgnoreCase);
-                }
+                } // End if val1 & val2
 
-            }
+            } // End if (val1 is string && val2 is string)
 
             return object.Equals(val1, val2);
         }
@@ -172,12 +189,9 @@ namespace DataPivoter
     public class cColumnGroup : cPivotBase
     {
 
-        //public System.Collections.Generic.List<string> lsFieldList = new System.Collections.Generic.List<string>();
         public System.Collections.Generic.List<string> FieldsToGroupBy;
-        public DotNet2Extensions.HashSet<object> DistinctValues = new DotNet2Extensions.HashSet<object>();
-        // public System.Collections.Generic.List<cDistinctValue> DistinctValuesList = new System.Collections.Generic.List<cDistinctValue>();
+        // public DotNet2Extensions.HashSet<object> DistinctValues = new DotNet2Extensions.HashSet<object>();
         cGroupedValues GroupedValues = new cGroupedValues();
-
 
 
         public cColumnGroup(object objParent, System.Collections.Generic.List<string> lsFieldsToGroupBy)
@@ -190,21 +204,19 @@ namespace DataPivoter
 
         public void Init()
         {
-            System.Data.DataTable dt = ((cPivotBase)this.parent).data;
-            
+            System.Data.DataTable dtParentData = ((cPivotBase)this.parent).data;
+            System.Data.DataTable dtDistinctValuesData = dtParentData.Clone();
 
-            System.Data.DataTable dt2 = dt.Clone();
-
-            for (int i = 0; i < dt.Rows.Count; ++i)
+            for (int i = 0; i < dtParentData.Rows.Count; ++i)
             {
 
                 /*
-                object val = dt.Rows[i][groupField];
+                object val = dtParentData.Rows[i][groupField];
                 
                 if (!this.DistinctValues.Contains(val))
                 {
                     this.DistinctValues.Add(val);
-                    dt2.ImportRow(dt.Rows[i]);
+                    dt2.ImportRow(dtParentData.Rows[i]);
                 }
                 */
 
@@ -212,39 +224,50 @@ namespace DataPivoter
 
                 for (int j = 0; j < this.FieldsToGroupBy.Count; ++j)
                 {
-                    object val = dt.Rows[i][this.FieldsToGroupBy[j]];
+                    object val = dtParentData.Rows[i][this.FieldsToGroupBy[j]];
 
-                    int myind = thisDistinctValuesList.FindIndex(delegate(GroupedValuesList nodeToCompare)
+                    int foundIndex = thisDistinctValuesList.FindIndex(delegate(GroupedValuesList nodeToCompare)
                     {
-                        // return System.StringComparer.InvariantCultureIgnoreCase.Equals(nodeToCompare.value, "foo");
                         return GroupedValuesList.CompareObjects(val, nodeToCompare.value);
                     }
                     );
 
 
-                    if (myind == -1)
+                    if (foundIndex == -1)
                     {
                         GroupedValuesList newDistinctValue = new GroupedValuesList(val);
                         thisDistinctValuesList.Add(newDistinctValue);
                         thisDistinctValuesList = newDistinctValue.ls;
 
                         if(j == this.FieldsToGroupBy.Count -1)
-                            dt2.ImportRow(dt.Rows[i]);
+                            dtDistinctValuesData.ImportRow(dtParentData.Rows[i]);
                     }
                     else
                     {
-                        thisDistinctValuesList = thisDistinctValuesList[myind].ls;
+                        thisDistinctValuesList = thisDistinctValuesList[foundIndex].ls;
                     }
-                    
-                    
+
                 }
 
             }
 
-            System.Data.DataTable dtt = dt2.Sort("SO_Nr ASC, GB_Nr ASC");
+            System.Data.DataTable dtSortedDistinctValuesData = dtDistinctValuesData.Sort("SO_Nr ASC, GB_Nr ASC");
 
-            System.Console.WriteLine(dtt.Rows.Count);
+            System.Console.WriteLine(dtSortedDistinctValuesData.Rows.Count);
             System.Console.WriteLine(GroupedValues.Count);
+
+
+            for (int j = 0; j < this.FieldsToGroupBy.Count; ++j)
+            {
+                foreach (System.Data.DataRow dr in dtSortedDistinctValuesData.Rows)
+                {
+                    
+                }    
+            }
+
+            // for(this.GroupedValues.DistinctValuesList.ob
+
+
 
             // System.Console.WriteLine(drs);
             // dt2.DefaultView.Sort = "SO_Nr ASC";
@@ -252,26 +275,24 @@ namespace DataPivoter
             // dt2 = dt2.DefaultView.ToTable();
         }
 
-
-
-
     }
 
 
     public class cDistinctValue
     {
         public object parent;
-        public object Value;
+
+        public System.Collections.Generic.Dictionary<string, object > dict;
+
         public System.Data.DataTable data;
+
 
         public cDistinctValue()
         { 
-        
+            dict = new System.Collections.Generic.Dictionary<string, object>  (System.StringComparer.InvariantCultureIgnoreCase);
         }
-        
 
     }
-
 
 
 }
